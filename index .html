@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Quiz - PCASP</title>
+  <style>
+    :root {
+      --azul: #0f3d73;
+      --azul-claro: #eaf3ff;
+      --verde: #d9f7df;
+      --verde-borda: #2e9d45;
+      --vermelho: #ffe1e1;
+      --vermelho-borda: #d64545;
+      --amarelo: #fff5cf;
+      --texto: #1f2937;
+      --cinza: #f3f4f6;
+      --roxo: #f3e8ff;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      background: linear-gradient(135deg, #f4f8ff, #ffffff);
+      color: var(--texto);
+      padding: 18px;
+    }
+
+    .container {
+      max-width: 960px;
+      margin: 0 auto;
+      background: #ffffff;
+      border-radius: 22px;
+      border: 2px solid #d8e7fb;
+      overflow: hidden;
+      box-shadow: 0 8px 24px rgba(15, 61, 115, 0.12);
+    }
+
+    .topo {
+      background: var(--azul);
+      color: #ffffff;
+      padding: 26px 22px;
+      text-align: center;
+    }
+
+    .topo h1 {
+      margin: 0;
+      font-size: 28px;
+      line-height: 1.25;
+    }
+
+    .topo p {
+      margin: 10px 0 0;
+      font-size: 16px;
+      opacity: 0.95;
+    }
+
+    .conteudo { padding: 24px; }
+
+    .banca {
+      background: var(--azul-claro);
+      border-left: 6px solid var(--azul);
+      padding: 14px 16px;
+      border-radius: 12px;
+      font-weight: bold;
+      margin-bottom: 18px;
+      line-height: 1.45;
+    }
+
+    .numero {
+      display: inline-block;
+      background: var(--azul);
+      color: #fff;
+      padding: 8px 14px;
+      border-radius: 999px;
+      font-weight: bold;
+      margin-bottom: 14px;
+    }
+
+    .pergunta {
+      background: #ffffff;
+      border: 2px solid #e5e7eb;
+      padding: 20px;
+      border-radius: 16px;
+      line-height: 1.6;
+      font-size: 18px;
+      margin-bottom: 20px;
+    }
+
+    .alerta {
+      background: #fff7ed;
+      border: 2px solid #fb923c;
+      color: #7c2d12;
+      border-radius: 14px;
+      padding: 14px;
+      margin-top: 16px;
+      font-weight: bold;
+    }
+
+    .alternativas {
+      display: grid;
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+
+    .alternativa {
+      border: 2px solid #d1d5db;
+      background: var(--cinza);
+      border-radius: 14px;
+      padding: 15px 16px;
+      cursor: pointer;
+      font-size: 17px;
+      transition: 0.2s;
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      line-height: 1.45;
+    }
+
+    .alternativa:hover {
+      transform: scale(1.01);
+      border-color: var(--azul);
+      background: #eef6ff;
+    }
+
+    .letra {
+      background: var(--azul);
+      color: #ffffff;
+      min-width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      margin-top: -3px;
+    }
+
+    .correta {
+      background: var(--verde) !important;
+      border-color: var(--verde-borda) !important;
+    }
+
+    .errada {
+      background: var(--vermelho) !important;
+      border-color: var(--vermelho-borda) !important;
+    }
+
+    .feedback {
+      display: none;
+      padding: 18px;
+      border-radius: 14px;
+      font-size: 18px;
+      font-weight: bold;
+      margin-bottom: 18px;
+    }
+
+    .feedback.ok {
+      display: block;
+      background: var(--verde);
+      border: 2px solid var(--verde-borda);
+      color: #14532d;
+    }
+
+    .feedback.erro {
+      display: block;
+      background: var(--vermelho);
+      border: 2px solid var(--vermelho-borda);
+      color: #7f1d1d;
+    }
+
+    .explicacao {
+      display: none;
+      background: var(--amarelo);
+      border: 2px solid #e6bd3b;
+      border-radius: 16px;
+      padding: 20px;
+      line-height: 1.6;
+      font-size: 17px;
+    }
+
+    .explicacao h2 {
+      margin-top: 0;
+      color: #7c5800;
+      font-size: 22px;
+    }
+
+    .destaque {
+      background: #ffffff;
+      border-left: 6px solid #f59e0b;
+      padding: 14px;
+      border-radius: 10px;
+      margin: 14px 0;
+    }
+
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+      margin: 16px 0;
+    }
+
+    .card {
+      background: #ffffff;
+      border: 2px solid #dbeafe;
+      border-radius: 14px;
+      padding: 14px;
+    }
+
+    .card h3 {
+      margin: 0 0 8px;
+      color: var(--azul);
+      font-size: 17px;
+    }
+
+    .card p {
+      margin: 0;
+      font-size: 15px;
+      line-height: 1.45;
+    }
+
+    .mnem-card {
+      background: var(--roxo);
+      border: 2px solid #c084fc;
+      border-radius: 14px;
+      padding: 16px;
+      margin: 14px 0;
+    }
+
+    .analise {
+      background: #ffffff;
+      border: 2px solid #e5e7eb;
+      border-radius: 14px;
+      padding: 14px 16px;
+      margin: 12px 0;
+    }
+
+    .analise strong {
+      color: var(--azul);
+    }
+
+    .botao {
+      display: none;
+      width: 100%;
+      border: none;
+      background: var(--azul);
+      color: #ffffff;
+      padding: 15px;
+      border-radius: 14px;
+      font-size: 17px;
+      font-weight: bold;
+      cursor: pointer;
+      margin-top: 18px;
+    }
+
+    .botao:hover { background: #082b52; }
+
+    .rodape {
+      text-align: center;
+      background: #f8fafc;
+      padding: 14px;
+      font-size: 14px;
+      color: #334155;
+      border-top: 1px solid #e5e7eb;
+    }
+
+    @media (max-width: 760px) {
+      body { padding: 10px; }
+      .conteudo { padding: 16px; }
+      .topo h1 { font-size: 23px; }
+      .pergunta, .alternativa, .feedback, .explicacao { font-size: 16px; }
+      .cards { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header class="topo">
+      <h1>🎯 Quiz de Contabilidade Pública</h1>
+      <p>Plano de Contas Aplicado ao Setor Público</p>
+    </header>
+
+    <main class="conteudo">
+      <div class="banca">
+        FGV - Aud Est (CGE SC)/CGE SC/Ciências Contábeis/2023
+      </div>
+
+      <span class="numero">Questão 1</span>
+
+      <section class="pergunta">
+        O Plano de Contas Aplicado ao Setor Público (PCASP) tem os seguintes objetivos, à exceção de um. Assinale-o.
+
+        <div class="alerta">
+          ⚠️ Atenção: a questão pede a alternativa que NÃO representa objetivo do PCASP.
+        </div>
+      </section>
+
+      <section class="alternativas">
+        <div class="alternativa" onclick="responder(this, false)">
+          <span class="letra">A</span>
+          <span>Permitir a consolidação nacional das contas públicas.</span>
+        </div>
+
+        <div class="alternativa" onclick="responder(this, true)">
+          <span class="letra">B</span>
+          <span>Igualar os registros de natureza patrimonial, orçamentária e de controle.</span>
+        </div>
+
+        <div class="alternativa" onclick="responder(this, false)">
+          <span class="letra">C</span>
+          <span>Padronizar os registros contábeis das entidades do setor público.</span>
+        </div>
+
+        <div class="alternativa" onclick="responder(this, false)">
+          <span class="letra">D</span>
+          <span>Contribuir para a transparência da gestão fiscal e para o controle social.</span>
+        </div>
+
+        <div class="alternativa" onclick="responder(this, false)">
+          <span class="letra">E</span>
+          <span>Contribuir para a adequada tomada de decisão e para a racionalização de custos no setor público.</span>
+        </div>
+      </section>
+
+      <div id="feedback" class="feedback"></div>
+
+      <section id="explicacao" class="explicacao">
+        <h2>✅ Gabarito: B</h2>
+
+        <p>
+          A alternativa B é a exceção, pois o PCASP não tem como objetivo <strong>igualar</strong> os registros de natureza patrimonial, orçamentária e de controle.
+        </p>
+
+        <div class="destaque">
+          <strong>Ideia central:</strong><br>
+          O PCASP não mistura nem iguala as naturezas da informação. Ele organiza, segrega e padroniza os registros contábeis do setor público.
+        </div>
+
+        <div class="cards">
+          <div class="card">
+            <h3>Patrimonial</h3>
+            <p>Registra fatos que afetam o patrimônio público, como bens, direitos, obrigações, variações aumentativas e diminutivas.</p>
+          </div>
+
+          <div class="card">
+            <h3>Orçamentária</h3>
+            <p>Registra a execução do orçamento, como previsão da receita, fixação da despesa, empenho, liquidação e pagamento.</p>
+          </div>
+
+          <div class="card">
+            <h3>Controle</h3>
+            <p>Registra atos potenciais e controles que podem afetar o patrimônio, como garantias, convênios e responsabilidades.</p>
+          </div>
+        </div>
+
+        <div class="mnem-card">
+          <strong>🧠 Macete de prova:</strong>
+          <ul>
+            <li>O PCASP <strong>padroniza</strong> os registros.</li>
+            <li>O PCASP <strong>segrega</strong> as naturezas da informação.</li>
+            <li>O PCASP <strong>permite consolidação</strong> das contas públicas.</li>
+            <li>O PCASP <strong>não iguala</strong> as naturezas patrimonial, orçamentária e de controle.</li>
+          </ul>
+        </div>
+
+        <div class="analise">
+          <strong>Alternativa A — correta.</strong><br>
+          Permitir a consolidação nacional das contas públicas é um dos objetivos do PCASP. A padronização permite reunir informações da União, Estados, Distrito Federal e Municípios.
+        </div>
+
+        <div class="analise">
+          <strong>Alternativa B — incorreta.</strong><br>
+          O PCASP não iguala os registros de natureza patrimonial, orçamentária e de controle. Essas naturezas têm finalidades diferentes e devem permanecer segregadas.
+        </div>
+
+        <div class="analise">
+          <strong>Alternativa C — correta.</strong><br>
+          Padronizar os registros contábeis das entidades do setor público é objetivo essencial do PCASP.
+        </div>
+
+        <div class="analise">
+          <strong>Alternativa D — correta.</strong><br>
+          A padronização contábil contribui para a transparência da gestão fiscal e facilita o controle social.
+        </div>
+
+        <div class="analise">
+          <strong>Alternativa E — correta.</strong><br>
+          Informações contábeis padronizadas auxiliam a tomada de decisão, o planejamento, o controle e a racionalização de custos no setor público.
+        </div>
+
+        <p>
+          Portanto, a alternativa que não representa objetivo do PCASP é:
+          <strong>B) Igualar os registros de natureza patrimonial, orçamentária e de controle.</strong>
+        </p>
+      </section>
+
+      <button id="reiniciar" class="botao" onclick="reiniciarQuiz()">🔄 Tentar novamente</button>
+    </main>
+
+    <footer class="rodape">
+      Curso de Contabilidade Professor Moreira • WhatsApp: (61) 98532-3574
+    </footer>
+  </div>
+
+  <script>
+    function responder(elemento, correta) {
+      const alternativas = document.querySelectorAll('.alternativa');
+      const feedback = document.getElementById('feedback');
+      const explicacao = document.getElementById('explicacao');
+      const botao = document.getElementById('reiniciar');
+
+      alternativas.forEach(alt => {
+        alt.style.pointerEvents = 'none';
+      });
+
+      if (correta) {
+        elemento.classList.add('correta');
+        feedback.className = 'feedback ok';
+        feedback.innerHTML = '🎉 Muito bem! O PCASP não iguala as naturezas da informação; ele as segrega e padroniza.';
+      } else {
+        elemento.classList.add('errada');
+        feedback.className = 'feedback erro';
+        feedback.innerHTML = '❌ Ainda não. A questão pede a exceção. Procure a alternativa que traz uma ideia incompatível com o PCASP.';
+        alternativas[1].classList.add('correta');
+      }
+
+      explicacao.style.display = 'block';
+      botao.style.display = 'block';
+    }
+
+    function reiniciarQuiz() {
+      const alternativas = document.querySelectorAll('.alternativa');
+      const feedback = document.getElementById('feedback');
+      const explicacao = document.getElementById('explicacao');
+      const botao = document.getElementById('reiniciar');
+
+      alternativas.forEach(alt => {
+        alt.classList.remove('correta', 'errada');
+        alt.style.pointerEvents = 'auto';
+      });
+
+      feedback.className = 'feedback';
+      feedback.innerHTML = '';
+      explicacao.style.display = 'none';
+      botao.style.display = 'none';
+    }
+  </script>
+</body>
+</html>
